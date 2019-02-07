@@ -84,21 +84,24 @@ class Topic {
 }
 
 class Question {
-    constructor(text, answers) {
-        this.textOfQuestion = text;
-        this.answersOnQuestion = answers;
+    constructor(text, answers, corrAns) {
+        this.textOfQuestion = text;         //string    текст вопроса
+        this.answersOnQuestion = answers;   //array     ответы на вопросы
+        this.correctAnswers = corrAns;
     }
 }
 
+var q = new Question('how are you?', ['fine', 'good', 'great', 'bad'], [false, false, true, false]);
+/*
 class Answer {
     constructor(text, correct, questNum, topicNum) {
-        this.textOfAnswer = text;
-        this.correctAnswer = correct;
-        this.numderOfQuestion = questNum;
-        this.numberOfTopic = topicNum;
+        this.textOfAnswer = text;           //string     текст ответа
+        this.correctAnswer = correct;       //boolean    правильность ответа(true/false)
+        this.numderOfQuestion = questNum;   //integer    номер вопроса
+        this.numberOfTopic = topicNum;      //integer    номер темы
     }
+
 }
-
-
+*/
 //var theme=new Topic('universe',)
 
