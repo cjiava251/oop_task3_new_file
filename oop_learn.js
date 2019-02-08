@@ -69,39 +69,71 @@ qRightAnswers[3]=4;
 //stars.test(4,textsOfQuestions,qAnswers1,qAnswers2,qAnswers3,qAnswers4,qRightAnswers);
 */
 
-class educationCourse {
-    constructor(name, topics) {
-        this.nameOfCourse = name;
-        this.topics = topics;
+
+
+
+class Answer {
+    constructor(text, correct, num, questNum, topicNum) {
+        this.textOfAnswer = text;
+        this.correctAnswer = correct;  //true or false
+        this.numAnswerInQuest = num;   //номер ответа в вопросе
+        this.numberOfQuestion = questNum;
+        this.numberOfTopic = topicNum;
     }
 }
 
-class Topic {
-    constructor(name, questions) {
-        this.nameOfTopic = name;
-        this.questions = questions;
+class Answers {
+    constructor(text, correct, questNum, topicNum) {
+        this.textOfAnswer = text;           //string     текст ответа
+        this.numderOfQuestion = questNum;   //integer    номер вопроса
+        this.numberOfTopic = topicNum;      //integer    номер темы
+
+        for (var i = 1; i <= 4; i++) {
+            ans[i] = new Answer(text[i], correct[i], i, questNum, topicNum);
+        }
     }
 }
 
 class Question {
-    constructor(text, answers, corrAns) {
-        this.textOfQuestion = text;         //string    текст вопроса
-        this.answersOnQuestion = answers;   //array     ответы на вопросы
-        this.correctAnswers = corrAns;
+    constructor(questionText, answersText, correct, questNum, topicNum) {
+        this.textOfQuestion = questionText;         //текст вопроса
+        ans = new Answers(answersText, correct, questNum, topicNum);
     }
 }
 
-var q = new Question('how are you?', ['fine', 'good', 'great', 'bad'], [false, false, true, false]);
-/*
-class Answer {
-    constructor(text, correct, questNum, topicNum) {
-        this.textOfAnswer = text;           //string     текст ответа
-        this.correctAnswer = correct;       //boolean    правильность ответа(true/false)
-        this.numderOfQuestion = questNum;   //integer    номер вопроса
-        this.numberOfTopic = topicNum;      //integer    номер темы
+
+class Topic {
+    constructor(name, topicNum,quantityQuest,questTexts,ansTexts,correct) {
+        this.nameOfTopic = name;
+        this.numberOfTopic = topicNum;   
+        this.quantityOfQuestions=quantityQuest;    
+        this.textsOfQuestions=questTexts;
+        
+        for (var i=0;i<=quantityQuest;i++) {
+            quests[i]=new Question(questTexts[i],ansTexts[i],correct[i],i,topicNum);
+        }
     }
 
 }
-*/
+
+
+class educationCourse {
+    constructor(name, topics, quanQuestions, topicsName,questTexts,ansTexts,correct) {
+        this.nameOfCourse = name;
+        this.quantityOfTopics = topics;             //количество тем   integer
+        this.quantityOfQuestions = quanQuestions;       //вопросов          array of integer
+        this.namesOfTopics=topicsName;
+
+
+        for (var i=0;i<=topics;i++) {
+            topics[i]=new Topic(topicsName[i],i,quanQuestions[i],questTexts[i],ansTexts[i],correct[i]);
+        }
+    }
+}
+
+
+
+
+
 //var theme=new Topic('universe',)
 
