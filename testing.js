@@ -27,17 +27,15 @@ class Director {
                     c = 2;
                 }
                 else continue;
-                this.employees[this.quantityOfEmployees] = new Employee(Employee.typeOfEmployee(c));
+                this.employees[this.quantityOfEmployees] = new Employee(Employee.typeOfEmployee(c),this.projects,i);
                 dept.getEmployees(this.employees[this.quantityOfEmployees]);
                 this.quantityOfEmployees++;
-                //this.sentEmployeesToDepartment(dept);
             }
         }
-
     }
 
-    sentProjectsToDepartment(dept) {
-        dept.getProjects(this.projects);
+    sentProjectsToDepartment(dept,day) {
+        dept.getProjects(this.projects,day);
     }
 }
 
@@ -61,7 +59,7 @@ class Department {
         this.quantityOfEmployees++;
     }
 
-    getProjects(proj) {
+    getProjects(proj,day) {
         var num;
         var dirProj = proj.filter(function (item) {
             if ((item.inDevDepartment == false) && (item.inTestDepartment == false))
@@ -82,6 +80,7 @@ class Department {
                     this.projects[this.quantityOfProjects].inDevDepartment = false;
                     this.projects[this.quantityOfProjects].inTestDepartment = true;
                     this.projects[this.quantityOfProjects].readyToTest = false;
+                    this.projects[this.quantityOfProjects].dayOfStartDev=day;
                     this.quantityOfProjects++;
                 }
             }
@@ -97,6 +96,7 @@ class Department {
                     this.projects[this.quantityOfProjects].inDevDepartment = true;
                     this.projects[this.quantityOfProjects].inTestDepartment = false;
                     this.projects[this.quantityOfProjects].readyToTest = false;
+                    this.projects[this.quantityOfProjects].dayOfStartDev=day;
                     this.quantityOfProjects++;
                 }
             }
@@ -109,10 +109,50 @@ class Employee {
     static typeOfEmployee(i) {
         return ['Web developer', 'Mobile developer', 'QA tester'][i];
     }
-    constructor(type) {
+    constructor(type,proj,id) {
         this.type = Employee.typeOfEmployee(type);
         this.completedProjects = 0;
         this.busy = false;
+     //   this.currentProject=proj;
+        this.currentProjectID=id;
+        this.notWorkingDays=0;
+    }
+    
+    getProject(proj) {
+
+    }
+
+    completeProject(day,proj) {
+        if (this.busy==false) {
+            this.notWorkingDays++;
+        }
+        else {
+            if (this.type!=Employee.typeOfEmployee(2)) {
+                if (proj.difficulty==day-proj.dayOfStartDev) {
+                    this.busy=false;
+                    this.notWorkingDays=0;
+                    this.completedProjects++;
+                    proj[this.currentProjectID].readyToTest=true;
+                }
+            }
+            else {
+                if ((proj.inTestDepartment==true) && (day==proj.dayOfStartDev)) 
+                    this.busy=true;
+                else {
+                    this.busy=false;
+                    this.completedProjects++;
+                    // указать, что проект завершен(удалить или типа того)
+                }
+            }
+
+        }
+
+        if (this.type==Employee.typeOfEmployee(1)) {
+            if (this.busy==false) {
+
+            }
+
+        }
     }
 }
 
@@ -124,6 +164,7 @@ class Project {
         this.type = Project.typeOfProject(Math.round(Math.random()));
         this.difficulty = Math.round(Math.random() * 2 + 1);
         this.dayOfAdding = day;
+        this.dayOfStartDev;
         this.inDevDepartment = false;
         this.inTestDepartment = false;
         this.readyToTest = false;
@@ -133,15 +174,3 @@ class Project {
 var dir = new Director;
 dir.getEmployees(0);
 dir.getProjects(0);
-
-/*
-var mas=[];
-for (var i=0;i<=4;i++) {
-    mas[i]=[];
-    for (var j=0;j<=3;j++) {
-        mas[i][j]=4;
-    }
-}
-
-console.log(mas);
-*/
