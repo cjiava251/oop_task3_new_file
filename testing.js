@@ -1,7 +1,7 @@
 class Director {
     constructor() {
         this.projects = [];
-        this.employees = [];
+        //this.employees = [];
         this.quantityOfProjects = 0;
         this.quantityOfEmployees = 0;
     }
@@ -14,11 +14,12 @@ class Director {
     }
 
     getEmployees(day, dept) {
-        var c;
+        var c,emp;
         if (day != 1) {
             for (var i = 0; i <= this.quantityOfProjects - 1; i++) {
                 if ((this.projects[i].dayOfAdding < day) && (this.projects[i].inDevDepartment == false) && (this.projects[i].inTestDepartment == false)) {
-                    if (this.projects[i].type == Project.typeOfProject(0))
+                    //if (this.projects[i].type == Project.typeOfProject(0))
+                    if ((this.projects[i].type==dept.type) || ((dept.type==Department.typeOfDepartment(2) &&  ()) )
                         c = 0;
                     else
                         c = 1;
@@ -27,21 +28,21 @@ class Director {
                     c = 2;
                 }
                 else continue;
-                this.employees[this.quantityOfEmployees] = new Employee(Employee.typeOfEmployee(c), this.projects, i);
-                dept.getEmployees(this.employees[this.quantityOfEmployees]);
-                this.quantityOfEmployees++;
+                emp=new Employee(Employee.typeOfEmployee(c));
+                dept.getEmployees(emp);
             }
         }
     }
 
     sentProjectsToDepartment(dept, day) {
-        dept.getProjects(this.projects, day);
+        this.projects=dept.getProjects(this.projects, day);
+
     }
 }
 
 class Department {
     static typeOfDepartment(i) {
-        return ['Department of Web Development', 'Department of Mobile Development', 'Department of QA Testing'][i];
+        return ['Web', 'Mobile', 'Test'][i];
     }
     constructor(type) {
         this.type = Department.typeOfDepartment(type);
@@ -58,7 +59,7 @@ class Department {
 
     getEmployees(emp) {
         this.employees[this.quantityOfEmployees] = emp;
-        this.employees[this.quantityOfEmployees].busy = true;
+        //this.employees[this.quantityOfEmployees].busy = true;
         this.quantityOfEmployees++;
     }
 
@@ -83,7 +84,7 @@ class Department {
         function recieveProjects(proj, inDev, inTest, rdyTest) {
             var num = 0, difSum = 0;
 
-            function giveProjectsToDevelopers(k) {
+            function giveProjectsToDevelopers() {
                 this.projects[this.quantityOfProjects] = proj[i];
                 this.projects[this.quantityOfProjects].inDevDepartment = inDev;
                 this.projects[this.quantityOfProjects].inTestDepartment = inTest;
@@ -118,16 +119,19 @@ class Department {
                         Type = 2;
                         break;
                 }
+                var qofe = this.quantityOfFreeEmployees;
                 for (var j = 1; j <= 2; j++) {
                     if (mode == 0) {
                         for (var i = 0; i <= proj.length - 1; i++) {
                             if (Type == 0) {
                                 proj[i].quantityOfDevelopers = 1;
+                                qofe--;
                                 mode = 1;
                             }
                             else if (Type == 1) {
                                 if (proj.length >= this.quantityOfFreeEmployees) {
                                     proj[i].quantityOfDevelopers = 1;
+                                    qofe--;
                                     mode = 1;
                                 }
                                 else {
@@ -137,16 +141,19 @@ class Department {
                                     if (difSum <= this.quantityOfFreeEmployees) {
                                         mode = 1;
                                         proj[i].quantityOfDevelopers = proj[i].difficulty;
+                                        qofe -= proj[i].difficulty;
                                         proj[i].difficulty = 1;
                                     }
                                     else {
                                         proj[i].quantityOfDevelopers = 1;
+                                        qofe--;
                                         mode = 2;
                                     }
                                 }
                             }
                             else {
                                 proj[i].quantityOfDevelopers = 1;
+                                qofe--;
                                 proj[i].difficulty = 1;
                                 mode = 1;
                             }
@@ -154,100 +161,41 @@ class Department {
                     }
                     else if (mode == 2) {
                         for (i = 0; i <= proj.length - 1; i++) {
-                            if ((proj[i].difficulty - 1 < difSum) && (proj[i].difficulty != 1)) {
-                                difSum = difSum - (proj[i].difficulty - 1);
+                            if ((qofe > 2) || ((qofe == proj[i].difficulty - 1) && (qofe != 0))) {
                                 proj[i].quantityOfDevelopers = proj[i].difficulty;
-                            }
-                            else {
-                                if (((proj[i].difficulty == 2) && (difSum == 1)) || ((proj[1].difficulty == 3) && (difSum == 2))) {
-                                    proj[i].quantityOfDevelopers = proj[i].difficulty;
-                                    difSum = 0;
-                                }
-                                else if ((difSum == 2) && (this.quantityOfFreeEmployees == 1) && (proj[i].difficulty == 2)) {
-                                    proj[i].quantityOfDevelopers = proj[1].difficulty;
-                                    difSum--;
-                                }
-
+                                qofe -= proj[i].difficulty - 1;
+                                difSum -= proj[i].difficulty - 1;
                             }
                         }
                     }
                 }
             }
         }
+        switch (this.type) {
+            case Department.typeOfDepartment(0):
+                recieveProjects(webProj, true, false, false);
+                break;
+            case Department.typeOfDepartment(1):
+                recieveProjects(mobileProj, true, false, false);
+                break;
+            case Department.typeOfDepartment(2):
+                recieveProjects(testProj, false, true, false);
+                break;
+        }
     }
-
-}
-
-
-
-
-
-/*
-if ((proj.length>0) && (this.employees.length>0)) {
-    if ((proj[0].type==Project.typeOfProject(0)) || (proj[0].type==Project.typeOfProject(2))) {
-        qod=1;
-        if (proj[0].type==Project.typeOfProject(2))
-            diff=1;
-        else
-            diff=0;
-    }
-    else {
-        
-    }
-}  */
-
-
-
-
-/*
-    this.projects[this.quantityOfProjects] = proj[i];
-    this.projects[this.quantityOfProjects].inDevDepartment = inDev;
-    this.projects[this.quantityOfProjects].inTestDepartment = inTest;
-    this.projects[this.quantityOfProjects].readyToTest = rdyTest;
-    this.projects[this.quantityOfProjects].dayOfStartDev = day;
-
-    this.projects[this.quantityOfProjects].difficulty == [ QA: 1 || Dev: 1 | 2 | 3 ]  if (dept=QA) diff=1
-    this.projects[this.quantityOfProjects].quantityOfDevelopers = [QA: 1 || WebDev: 1 || MobDev: 1 | 2 | 3 ] if (dept=QA or dept=WebDev) diff=1 else diff=1/2/3
-    this.quantityOfEmployees=[-1 | -difficulty]
-    k=[0 | 1]
-
-*/
-
-
-switch (this.type) {
-    case Department.typeOfDepartment(0):
-        recieveProjects(webProj, true, false, false);
-        break;
-    case Department.typeOfDepartment(1):
-        recieveProjects(mobileProj, true, false, false);
-        break;
-    case Department.typeOfDepartment(2):
-        recieveProjects(testProj, false, true, false);
-        break;
-}
-    }
-
-giveProjectToDeveloper() {
-
-}
-
 }
 
 class Employee {
     static typeOfEmployee(i) {
-        return ['Web developer', 'Mobile developer', 'QA tester'][i];
+        return ['Web', 'Mobile', 'Test'][i];
     }
-    constructor(type, proj, id) {
+    constructor(type) {
         this.type = Employee.typeOfEmployee(type);
         this.completedProjects = 0;
         this.busy = false;
-        //   this.currentProject=proj;
-        this.currentProjectID = id;
+        //this.currentProject=proj;
+        //this.currentProjectID = id;
         this.notWorkingDays = 0;
-    }
-
-    getProject(proj) {
-
     }
 
     completeProject(day, proj) {
@@ -286,7 +234,7 @@ class Employee {
 
 class Project {
     static typeOfProject(i) {
-        return ['Web project', 'Mobile project'][i];
+        return ['Web', 'Mobile'][i];
     }
     constructor(day) {
         this.type = Project.typeOfProject(Math.round(Math.random()));
@@ -297,6 +245,7 @@ class Project {
         this.inDevDepartment = false;
         this.inTestDepartment = false;
         this.readyToTest = false;
+        this.flag=0;
     }
 }
 
